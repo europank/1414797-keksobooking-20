@@ -1,6 +1,5 @@
 'use strict';
 
-
 var NUMBER_OF_OBJECTS = 8;
 var OFFER_TYPE = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN = ['12:00', '13:00', '14:00'];
@@ -44,7 +43,7 @@ var getArrayObject = function (quantity) {
       },
       offer: {
         title: titleText,
-        address: location.x, location.y,
+        address: 'location.x, location.y',
         price: 1000,
         type: randomType,
         rooms: '',
