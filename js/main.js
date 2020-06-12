@@ -5,7 +5,6 @@ var OFFER_TYPE = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
-vbnvb
 
 var mapBlock = document.querySelector('.map');
 mapBlock.classList.remove('map--faded');
@@ -53,7 +52,7 @@ var renderPin = function (object) {
   var pinElement = pinTemplate.cloneNode(true);
   pinElement.innerHTML = '<img width="40" height="40" draggable="false" alt="Метка объявления">';
   pinElement.querySelector('img').src = object.author.avatar;
-  pinElement.querySelector('button').style = 'left: ' + object.location.x + '; top: ' + object.location.y + ';';
+  pinElement.style = 'left: ' + object.location.x + '; top: ' + object.location.y + ';';
 
   return pinElement;
 };
