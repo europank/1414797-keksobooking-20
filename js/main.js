@@ -1,5 +1,6 @@
 'use strict';
 
+
 var NUMBER_OF_OBJECTS = 8;
 var OFFER_TYPE = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN = ['12:00', '13:00', '14:00'];
