@@ -6,14 +6,19 @@ var CHECKIN = ['12:00', '13:00', '14:00'];
 var CHECKOUT = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var PIN_WIDTH = 62;
+var PIN_HEIGHT = 80;
+var MIN_Y = 130 - PIN_HEIGHT;
+var MAX_Y = 630 - PIN_HEIGHT;
+var MIN_X = PIN_WIDTH / 2;
+var MAX_X = 1200 - PIN_WIDTH * 2;
 
 var mapBlock = document.querySelector('.map');
 mapBlock.classList.remove('map--faded');
 var mapPinsBlock = document.querySelector('.map__pins');
-var pinTemplate = document.querySelector('.map__pin');
+var pinTemplate = document.querySelector('#pin');
 
-var userNumber = 1;
 var title = document.querySelector('.map__title');
 var titleText = title.textContent;
 
@@ -30,20 +35,20 @@ function getRandElement(array) {
 
 var getArrayObject = function (quantity) {
   var ads = [];
-  for (var i = 0; i < quantity; i++) {
-    var randomX = getRandomData(0, 1200);
-    var randomY = getRandomData(130, 630);
+  for (var i = 1; i <= quantity; i++) {
+    var randomX = getRandomData(MIN_X, MAX_X);
+    var randomY = getRandomData(MIN_Y, MAX_Y);
     var randomType = getRandElement(OFFER_TYPE);
     var randomChekin = getRandElement(CHECKIN);
     var randomCheckout = getRandElement(CHECKOUT);
 
     var object = {
       author: {
-        avatar: 'img/avatars/user0' + (userNumber + i) + '.png'
+        avatar: 'img/avatars/user0' + i + '.png'
       },
       offer: {
         title: titleText,
-        address: 'location.x, location.y',
+        address: (location.x, location.y),
         price: 1000,
         type: randomType,
         rooms: '',
@@ -55,8 +60,8 @@ var getArrayObject = function (quantity) {
         photos: PHOTOS
       },
       location: {
-        x: randomX + 'px',
-        y: randomY + 'px'
+        x: randomX,
+        y: randomY
       }
     };
 
@@ -65,15 +70,15 @@ var getArrayObject = function (quantity) {
   return ads;
 };
 
-
 var renderPin = function (object) {
-  var pinElement = pinTemplate.cloneNode(true);
-  pinElement.innerHTML = '<img width="40" height="40" draggable="false" alt="Метка объявления">';
-  pinElement.querySelector('img').src = object.author.avatar;
-  pinElement.querySelector('img').alt = object.offer.title;
-  pinElement.style = 'left: ' + object.location.x + '; top: ' + object.location.y + ';';
-  pinElement.title = object.offer.title;
-  return pinElement;
+  var pin = pinTemplate.cloneNode(true);
+  pin.content.querySelector('img').src = object.author.avatar;
+  pin.content.querySelector('img').alt = object.offer.title;
+  var locationX = (object.location.x + PIN_WIDTH / 2);
+  var locationY = (object.location.y + PIN_HEIGHT);
+  pin.content.querySelector('button').style = 'left: ' + locationX + 'px; top: ' + locationY + 'px;';
+  pin.content.querySelector('button').title = object.offer.title;
+  return pin.content;
 };
 
 var fragment = document.createDocumentFragment();
