@@ -9,10 +9,10 @@ var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.g
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var PIN_WIDTH = 62;
 var PIN_HEIGHT = 80;
-var MIN_Y = 130 - PIN_HEIGHT;
-var MAX_Y = 630 - PIN_HEIGHT;
+var MIN_Y = 130;
+var MAX_Y = 630;
 var MIN_X = PIN_WIDTH / 2;
-var MAX_X = 1200 - PIN_WIDTH * 2;
+var MAX_X = 1200 - PIN_WIDTH / 2;
 
 var mapBlock = document.querySelector('.map');
 mapBlock.classList.remove('map--faded');
@@ -72,12 +72,15 @@ var getArrayObject = function (quantity) {
 
 var renderPin = function (object) {
   var pin = pinTemplate.cloneNode(true);
-  pin.content.querySelector('img').src = object.author.avatar;
-  pin.content.querySelector('img').alt = object.offer.title;
-  var locationX = (object.location.x + PIN_WIDTH / 2);
-  var locationY = (object.location.y + PIN_HEIGHT);
-  pin.content.querySelector('button').style = 'left: ' + locationX + 'px; top: ' + locationY + 'px;';
-  pin.content.querySelector('button').title = object.offer.title;
+  var pinImage = pin.content.querySelector('img');
+  var pinButton = pin.content.querySelector('button');
+  var locationX = (object.location.x - PIN_WIDTH / 2);
+  var locationY = (object.location.y - PIN_HEIGHT);
+  pinImage.src = object.author.avatar;
+  pinImage.alt = object.offer.title;
+  pinButton.style.left = locationX + 'px';
+  pinButton.style.top = locationY + 'px';
+  pinButton.title = object.offer.title;
   return pin.content;
 };
 
