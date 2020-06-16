@@ -22,7 +22,9 @@ mapBlock.classList.remove('map--faded');
 var mapPinsBlock = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin');
 var cardTemplate = document.querySelector('#card');
-var photoElement = cardTemplate.content.querySelector('.popup__photo');
+var photosElements = cardTemplate.content.querySelectorAll('.popup__photo');
+var photosElementsArray = Array.prototype.slice.call(photosElements);
+
 var featuresElements = cardTemplate.content.querySelectorAll('.popup__feature');
 var featuresElementsArray = Array.prototype.slice.call(featuresElements);
 
@@ -40,6 +42,7 @@ function getRandElement(array) {
 var getArrayObject = function (quantity) {
   var ads = [];
   featuresElementsArray.length = getRandomData(1, featuresElementsArray.length + 1);
+  photosElementsArray.length = getRandomData(1, PHOTOS.length + 1);
 
   for (var i = 1; i <= quantity; i++) {
     var randomX = getRandomData(MIN_X, MAX_X);
@@ -63,7 +66,7 @@ var getArrayObject = function (quantity) {
         checkout: randomCheckout,
         features: featuresElementsArray.length,
         description: 'Великолепная квартира-студия в центре Токио. Подходит как туристам, так и бизнесменам. Квартира полностью укомплектована и недавно отремонтирована.',
-        photos: PHOTOS
+        photos: photosElementsArray.length
       },
       location: {
         x: randomX,
@@ -99,14 +102,19 @@ for (var j = 0; j < adsArray.length; j++) {
 mapPinsBlock.appendChild(fragment);
 
 var newPin = adsArray[0];
-var randomPhotosLength = getRandomData(1, PHOTOS.length + 1);
+
 
 var renderCard = function (pin) {
   var card = cardTemplate.cloneNode(true);
   var featuresBlock = card.content.querySelector('.popup__features');
+  var photosBlock = card.content.querySelector('.popup__photos');
 
   while (featuresBlock.firstChild) {
     featuresBlock.removeChild(featuresBlock.firstChild);
+  }
+
+  while (photosBlock.firstChild) {
+    photosBlock.removeChild(photosBlock.firstChild);
   }
 
   for (var i = 0; i < pin.offer.features; i++) {
@@ -114,10 +122,10 @@ var renderCard = function (pin) {
     featuresBlock.appendChild(element);
   }
 
-  for (var l = 1; l < randomPhotosLength; l++) {
-    var photo = photoElement.cloneNode(true);
-    card.content.querySelector('.popup__photos').appendChild(photo);
-    photo.src = pin.offer.photos[l];
+  for (var l = 0; l < pin.offer.photos; l++) {
+    var photo = photosElementsArray[0].cloneNode(true);
+    photosBlock.appendChild(photo);
+    card.content.querySelectorAll('.popup__photo')[l].src = PHOTOS[l];
   }
 
   var houseType = '';
@@ -135,11 +143,9 @@ var renderCard = function (pin) {
   card.content.querySelector('.popup__text--time').textContent = 'Заезд после ' + pin.offer.checkin + ', выезд до ' + pin.offer.checkout;
   card.content.querySelector('.popup__description').textContent = pin.offer.description;
   card.content.querySelector('.popup__avatar').src = pin.author.avatar;
-  card.content.querySelector('.popup__photo').src = pin.offer.photos[0];
 
   return card.content;
 };
-
 
 var fragmentCard = document.createDocumentFragment();
 for (var k = 0; k < NUMBER_OF_POPUP; k++) {
