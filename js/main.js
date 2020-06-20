@@ -192,26 +192,22 @@ pinMain.addEventListener('keydown', function (evt) {
 });
 
 var numberRoomsValidity = function () {
-  for (var i = 0; i < roomNumberArray.length; i++) {
-    var rooms = roomNumberArray[i];
-    if (rooms.selected === true) {
-      for (var j = 0; j < guestNumberArray.length; j++) {
-        var guests = guestNumberArray[j];
-        if (rooms.value < guests.value || guests.value === '0') {
-          guests.setAttribute('disabled', 'disabled');
-        } else if (rooms.value === '100') {
-          if (guests.value === '0') {
-            guests.removeAttribute('disabled', 'disabled');
-          } else {
-            guests.setAttribute('disabled', 'disabled');
-          }
-        } else {
-          guests.removeAttribute('disabled', 'disabled');
-        }
-      }
+  for (var i = 0; i < guestNumberArray.length; i++) {
+    var guests = guestNumberArray[i];
+    var value = guests.value;
+    var select = roomNumberSelect.value;
+    if (select === '100' && value === '0') {
+      guests.removeAttribute('disabled', 'disabled');
+    } else if (select === '100' && value === '1') {
+      guests.setAttribute('disabled', 'disabled');
+    } else if (select < value || value === '0') {
+      guests.setAttribute('disabled', 'disabled');
+    } else {
+      guests.removeAttribute('disabled', 'disabled');
     }
   }
 };
+
 
 var validityEmptyField = function () {
   if (title.validity.valueMissing) {
