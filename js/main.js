@@ -8,12 +8,6 @@ var TYPE_MAP = {
   'house': 'Дом',
   'bungalo': 'Бунгало'
 };
-var MIN_PRICE_MAP = {
-  'palace': 10000,
-  'flat': 5000,
-  'house': 1000,
-  'bungalo': 0
-};
 var CHECKIN = ['12:00', '13:00', '14:00'];
 var CHECKOUT = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -42,10 +36,13 @@ var featuresElements = cardTemplate.querySelectorAll('.popup__feature');
 var featuresElementsArray = Array.prototype.slice.call(featuresElements);
 var addressInput = document.querySelector('#address');
 var roomNumberSelect = document.querySelector('#room_number');
-var roomNumberArray = document.querySelectorAll('#room_number option');
+var oneHundredRooms = document.querySelector('option[value="100"]');
+var oneRoom = document.querySelector('option[value="1"]');
+var notForGuests = document.querySelector('#capacity option[value="0"]');
 var guestNumberArray = document.querySelectorAll('#capacity option');
 var title = document.querySelector('#title');
 var price = document.querySelector('#price');
+
 
 var mapBlock = document.querySelector('.map');
 var form = document.querySelector('.ad-form');
@@ -182,7 +179,17 @@ pinMain.addEventListener('mousedown', function () {
   if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
     renderPins(adsArray);
   }
+  var pinElements = mapPinsBlock.querySelectorAll('button[type="button"]');
+  var pins = Array.prototype.slice.call(pinElements);
+  for (var i = 0; i < pins.length; i++) {
+    pins.addEventListener('click', setCard(i));
+  }
 });
+
+var setCard = function (a) {
+  var newPin = adsArray[a];
+  mapBlock.appendChild(renderCard(newPin));
+};
 
 pinMain.addEventListener('keydown', function (evt) {
   if (evt.key === 'Enter') {
@@ -196,11 +203,14 @@ var numberRoomsValidity = function () {
     var guests = guestNumberArray[i];
     var value = guests.value;
     var select = roomNumberSelect.value;
-    if (select === '100' && value === '0') {
+    var hundred = oneHundredRooms.value;
+    var room = oneRoom.value;
+    var noGuest = notForGuests.value;
+    if (select === hundred && value === noGuest) {
       guests.removeAttribute('disabled', 'disabled');
-    } else if (select === '100' && value === '1') {
+    } else if (select === hundred && value === room) {
       guests.setAttribute('disabled', 'disabled');
-    } else if (select < value || value === '0') {
+    } else if (select < value || value === noGuest) {
       guests.setAttribute('disabled', 'disabled');
     } else {
       guests.removeAttribute('disabled', 'disabled');
@@ -237,28 +247,7 @@ var priceValidity = function () {
   }
 };
 
-
-/*var numberRoomsValidity = function () {
-  for (var i = 0; i < roomNumberArray.length; i++) {
-    var rooms = roomNumberArray[i];
-    if (rooms.selected === true) {
-      for (var j = 0; j < guestNumberArray.length; j++) {
-        var guests = guestNumberArray[j];
-        if (rooms.value < guests.value) {
-          guests.setAttribute('disabled', 'disabled');
-        } else if (guests.value === '0') {
-          guests.setAttribute('disabled', 'disabled');
-        } else {
-          guests.removeAttribute('disabled', 'disabled');
-        }
-      }
-    }
-  }
-};*/
 disactivationPage();
-
-/*var newPin = adsArray[0];
-
 
 var renderCard = function (pin) {
   var card = cardTemplate.cloneNode(true);
@@ -278,10 +267,10 @@ var renderCard = function (pin) {
     featuresBlock.appendChild(element);
   }
 
-  for (var l = 0; l < PHOTOS.length; l++) {
+  for (var j = 0; j < PHOTOS.length; j++) {
     var photo = pin.offer.photos[0].cloneNode(true);
     photosBlock.appendChild(photo);
-    card.querySelectorAll('.popup__photo')[l].src = PHOTOS[l];
+    card.querySelectorAll('.popup__photo')[j].src = PHOTOS[j];
   }
 
   card.querySelector('.popup__title').textContent = pin.offer.title;
@@ -295,5 +284,3 @@ var renderCard = function (pin) {
 
   return card;
 };
-
-mapBlock.appendChild(renderCard(newPin));*/
