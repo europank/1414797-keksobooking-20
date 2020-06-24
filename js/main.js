@@ -10,8 +10,8 @@ var TYPE_MAP = {
 };
 var MIN_PRICE_MAP = {
   'palace': '10000',
-  'flat': '5000',
-  'house': '1000',
+  'flat': '1000',
+  'house': '5000',
   'bungalo': '0'
 };
 var CHECKIN = ['12:00', '13:00', '14:00'];
@@ -42,6 +42,7 @@ var photosElementsArray = Array.prototype.slice.call(photosElements);
 var featuresElements = cardTemplate.querySelectorAll('.popup__feature');
 var featuresElementsArray = Array.prototype.slice.call(featuresElements);
 var addressInput = document.querySelector('#address');
+var guestNumberSelect = document.querySelector('#capacity');
 var roomNumberSelect = document.querySelector('#room_number');
 var oneHundredRooms = document.querySelector('option[value="100"]');
 var oneRoom = document.querySelector('option[value="1"]');
@@ -141,6 +142,7 @@ var renderPin = function (object) {
   pinButton.style.left = locationX + 'px';
   pinButton.style.top = locationY + 'px';
   pinButton.title = object.offer.title;
+  pinButton.addEventListener('click', closeCard);
   pinButton.addEventListener('click', function () {
     setCard(object);
   });
@@ -159,8 +161,10 @@ var renderPins = function (array) {
   mapPinsBlock.appendChild(fragment);
 };
 
-var setAddressPin = function (element, value) {
-  element.setAttribute('placeholder', value);
+var setAddressPin = function (element, valueData) {
+  element.setAttribute('placeholder', valueData);
+  element.setAttribute('readonly', 'readonly');
+  element.value = valueData;
 };
 
 var pinMainXActive = parseInt(pinMain.style.left, 10) - PIN_MAIN_WIDTH / 2;
@@ -172,9 +176,9 @@ var activationPage = function () {
   mapBlock.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
   setAddressPin(addressInput, pinMainXActive + ', ' + pinMainYActive);
+  // addressInput.value = addressInput.placeholder;
   title.setAttribute('required', 'required');
   price.setAttribute('required', 'required');
-
   for (var i = 0; i < formElements.length; i++) {
     formElements[i].removeAttribute('disabled', 'disabled');
   }
@@ -185,9 +189,10 @@ var activationPage = function () {
   title.addEventListener('invalid', emptyFieldValidity);
   title.addEventListener('input', titleValidity);
   price.addEventListener('invalid', emptyFieldValidity);
-  price.addEventListener('invalid', priceValidity);
+  price.addEventListener('input', minPriceInvalidity);
   price.addEventListener('input', priceValidity);
-  price.addEventListener('change', minPriceValidity);
+  typeHouse.addEventListener('invalid', minPriceInvalidity);
+  typeHouse.addEventListener('change', minPriceValidity);
   timeOut.addEventListener('change', timeOutValidity);
   timeIn.addEventListener('change', timeInValidity);
   roomNumberSelect.addEventListener('click', numberRoomsValidity);
@@ -196,7 +201,6 @@ var activationPage = function () {
 var disactivationPage = function () {
   mapBlock.classList.add('map--faded');
   form.classList.add('ad-form--disabled');
-  addressInput.setAttribute('disabled', 'disabled');
   setAddressPin(addressInput, pinMainXDisactive + ', ' + pinMainYDisactive);
 
   for (var i = 0; i < formElements.length; i++) {
@@ -209,18 +213,33 @@ var disactivationPage = function () {
   title.removeEventListener('invalid', emptyFieldValidity);
   title.removeEventListener('input', titleValidity);
   price.removeEventListener('invalid', emptyFieldValidity);
-  price.removeEventListener('invalid', priceValidity);
+  price.removeEventListener('input', minPriceInvalidity);
   price.removeEventListener('input', priceValidity);
-  price.removeEventListener('change', minPriceValidity);
+  typeHouse.removeEventListener('invalid', minPriceInvalidity);
+  typeHouse.removeEventListener('change', minPriceValidity);
   timeOut.removeEventListener('change', timeOutValidity);
   timeIn.removeEventListener('change', timeInValidity);
   roomNumberSelect.removeEventListener('click', numberRoomsValidity);
 };
 
 pinMain.addEventListener('mousedown', function () {
-  activationPage();
-  if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
-    renderPins(adsArray);
+  if (event.which === 1) {
+    activationPage();
+    if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
+      renderPins(adsArray);
+    }
+    numberRoomsValidity();
+  }
+});
+
+pinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    evt.preventDefault();
+    activationPage();
+    if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
+      renderPins(adsArray);
+    }
+    numberRoomsValidity();
   }
 });
 
@@ -251,17 +270,6 @@ var openCardEnter = function (evt) {
   }
 };
 
-
-pinMain.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
-    evt.preventDefault();
-    activationPage();
-    if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
-      renderPins(adsArray);
-    }
-  }
-});
-
 var numberRoomsValidity = function () {
   for (var i = 0; i < guestNumberArray.length; i++) {
     var guests = guestNumberArray[i];
@@ -272,15 +280,18 @@ var numberRoomsValidity = function () {
     var noGuest = notForGuests.value;
     if (select === hundred && value === noGuest) {
       guests.removeAttribute('disabled', 'disabled');
+      guestNumberSelect.value = noGuest;
     } else if (select === hundred && value === room) {
       guests.setAttribute('disabled', 'disabled');
     } else if (select < value || value === noGuest) {
       guests.setAttribute('disabled', 'disabled');
+      guestNumberSelect.value = select;
     } else {
       guests.removeAttribute('disabled', 'disabled');
     }
   }
 };
+
 
 var emptyFieldValidity = function (evt) {
   var target = evt.target;
@@ -294,7 +305,7 @@ var emptyFieldValidity = function (evt) {
 var titleValidity = function () {
   var valueLength = title.value.length;
   if (valueLength < MIN_TITLE_LENGTH) {
-    title.setCustomValidity('Осталось ввести ' + (MIN_TITLE_LENGTH - valueLength) + ' символов');
+    title.setCustomValidity('Нужно ввести ещё ' + (MIN_TITLE_LENGTH - valueLength) + ' символов');
   } else if (valueLength > MAX_TITLE_LENGTH) {
     title.setCustomValidity('Вы превысили максимальную длину заголовка на ' + (valueLength - MAX_TITLE_LENGTH) + ' символов');
   } else {
@@ -315,6 +326,15 @@ var priceValidity = function (evt) {
 var minPriceValidity = function () {
   price.min = parseInt(MIN_PRICE_MAP[typeHouse.value], 10);
   price.placeholder = MIN_PRICE_MAP[typeHouse.value];
+};
+
+var minPriceInvalidity = function () {
+  minPriceValidity();
+  if (price.validity.rangeUnderflow) {
+    price.setCustomValidity('Некорректные данные');
+  } else {
+    price.setCustomValidity('');
+  }
 };
 
 var timeOutValidity = function (evt) {
