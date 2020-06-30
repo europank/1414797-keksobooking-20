@@ -84,7 +84,7 @@
     if (event.which === 1) {
       activationPage();
       if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
-        window.pin.renderPins(window.data.adsArray);
+        window.backend.load(window.pin.renderPins, function () {});
       }
       window.valid.numberRoomsValidity();
     }
@@ -95,7 +95,7 @@
       evt.preventDefault();
       activationPage();
       if (mapPinsBlock.children.length < NUMBER_OF_OBJECTS) {
-        window.pin.renderPins(window.data.adsArray);
+        window.backend.load(window.pin.renderPins, function () {});
       }
       window.valid.numberRoomsValidity();
     }
