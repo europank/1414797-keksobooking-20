@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
   var MAP_CHILD_LENGTH = 3;
   var cardTemplate = document.querySelector('#card').content;
   var mapBlock = document.querySelector('.map');
@@ -10,6 +9,8 @@
     var card = cardTemplate.cloneNode(true);
     var featuresBlock = card.querySelector('.popup__features');
     var photosBlock = card.querySelector('.popup__photos');
+    var photoElement = card.querySelector('.popup__photo');
+    var featureElements = card.querySelectorAll('.popup__feature');
 
     while (featuresBlock.firstChild) {
       featuresBlock.removeChild(featuresBlock.firstChild);
@@ -19,15 +20,19 @@
       photosBlock.removeChild(photosBlock.firstChild);
     }
 
-    for (var i = 0; i < pin.offer.features.length; i++) {
-      var element = pin.offer.features[i].cloneNode(true);
-      featuresBlock.appendChild(element);
+    for (var i = 0; i < featureElements.length; i++) {
+      var feature = featureElements[i].cloneNode(true);
+      for (var l = 0; l < pin.offer.features.length; l++) {
+        if (feature.name === pin.offer.features[l]) {
+          featuresBlock.appendChild(feature);
+        }
+      }
     }
 
     for (var j = 0; j < pin.offer.photos.length; j++) {
-      var photo = pin.offer.photos[0].cloneNode(true);
+      var photo = photoElement.cloneNode(true);
       photosBlock.appendChild(photo);
-      card.querySelectorAll('.popup__photo')[j].src = PHOTOS[j];
+      photo.src = pin.offer.photos[j];
     }
 
     card.querySelector('.popup__title').textContent = pin.offer.title;
@@ -74,6 +79,6 @@
     setCard: setCard,
     openCardEnter: openCardEnter,
     closeCard: closeCard,
-    // closeCardEsc: closeCardEsc
+    closeCardEsc: closeCardEsc
   };
 })();
