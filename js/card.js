@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var MAP_CHILD_LENGTH = 3;
   var cardTemplate = document.querySelector('#card').content;
   var mapBlock = document.querySelector('.map');
@@ -20,14 +21,23 @@
       photosBlock.removeChild(photosBlock.firstChild);
     }
 
-    for (var i = 0; i < featureElements.length; i++) {
-      var feature = featureElements[i].cloneNode(true);
-      for (var l = 0; l < pin.offer.features.length; l++) {
-        if (feature.name === pin.offer.features[l]) {
-          featuresBlock.appendChild(feature);
+    var getFeatures = function (data, elements) {
+      var addElement = featuresBlock.appendChild(elements);
+      for (var i = 0; i < pin.offer.features.length; i++) {
+        switch (data) {
+          case data[i]:
+            return addElement;
+          default:
+            return 'error';
         }
       }
+      return addElement;
+    };
+
+    for (var i = 0; i < pin.offer.features.length; i++) {
+      getFeatures(FEATURES[i], featureElements[i]);
     }
+
 
     for (var j = 0; j < pin.offer.photos.length; j++) {
       var photo = photoElement.cloneNode(true);

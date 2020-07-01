@@ -1,24 +1,30 @@
 'use strict';
 
 (function () {
+
   var PIN_MAIN_WIDTH = 62;
   var PIN_MAIN_HEIGHT = 62;
   var PIN_MAIN_HEIGHT_ACTIVE = 84;
   var NUMBER_OF_OBJECTS = 8;
   var mapPinsBlock = document.querySelector('.map__pins');
+  // var pins = mapPinsBlock.querySelectorAll('.map__pin');
   var pinMain = document.querySelector('.map__pin--main');
   var addressInput = document.querySelector('#address');
   var roomNumberSelect = document.querySelector('#room_number');
+  var guestNumberSelect = document.querySelector('#capacity');
   var title = document.querySelector('#title');
   var price = document.querySelector('#price');
   var typeHouse = document.querySelector('#type');
+  // var flat = typeHouse.querySelector('option[value="flat"]');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
   var mapBlock = document.querySelector('.map');
   var form = document.querySelector('.ad-form');
+  var features = document.querySelectorAll('.feature__checkbox');
   var formElements = document.querySelectorAll('.ad-form fieldset');
   var mapFiltersElements = document.querySelector('.map__filters').children;
-
+  var description = document.querySelector('#description');
+  var clearButton = form.querySelector('.ad-form__reset');
 
   var setAddressPin = function (element, valueData) {
     element.setAttribute('placeholder', valueData);
@@ -30,6 +36,41 @@
   var pinMainYActive = parseInt(pinMain.style.top, 10) - PIN_MAIN_HEIGHT_ACTIVE;
   var pinMainXDisactive = parseInt(pinMain.style.left, 10) - PIN_MAIN_WIDTH / 2;
   var pinMainYDisactive = parseInt(pinMain.style.top, 10) - PIN_MAIN_HEIGHT / 2;
+
+  var defaultType = typeHouse.value;
+  var defaultRoom = roomNumberSelect.value;
+  var defaultGuest = guestNumberSelect.value;
+  var defaultTimeIn = timeIn.value;
+  var defaultTimeOut = timeOut.value;
+
+  var clearForm = function () {
+    title.value = '';
+    price.value = '';
+    typeHouse.value = defaultType;
+    roomNumberSelect.value = defaultRoom;
+    guestNumberSelect.value = defaultGuest;
+    description.value = '';
+    timeIn.value = defaultTimeIn;
+    timeOut.value = defaultTimeOut;
+    for (var i = 0; i < features.length; i++) {
+      features[i].checked = false;
+    }
+  };
+
+  var clearFormEnter = function (evt) {
+    if (evt.key === 'Enter') {
+      evt.preventDefault();
+      clearForm();
+    }
+  };
+
+  var onFormLoad = function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(form), function () {
+      form.classList.add('ad-form--disabled');
+    }, function () {});
+  };
+
 
   var activationPage = function () {
     mapBlock.classList.remove('map--faded');
@@ -43,7 +84,7 @@
     for (var j = 0; j < mapFiltersElements.length; j++) {
       mapFiltersElements[j].removeAttribute('disabled', 'disabled');
     }
-
+    form.addEventListener('submit', onFormLoad);
     title.addEventListener('invalid', window.valid.emptyFieldValidity);
     title.addEventListener('input', window.valid.titleValidity);
     price.addEventListener('invalid', window.valid.emptyFieldValidity);
@@ -54,20 +95,21 @@
     timeOut.addEventListener('change', window.valid.timeOutValidity);
     timeIn.addEventListener('change', window.valid.timeInValidity);
     roomNumberSelect.addEventListener('click', window.valid.numberRoomsValidity);
+    clearButton.addEventListener('click', clearForm);
+    clearButton.addEventListener('keydown', clearFormEnter);
   };
 
   var disactivationPage = function () {
     mapBlock.classList.add('map--faded');
     form.classList.add('ad-form--disabled');
     setAddressPin(addressInput, pinMainXDisactive + ', ' + pinMainYDisactive);
-
     for (var i = 0; i < formElements.length; i++) {
       formElements[i].setAttribute('disabled', 'disabled');
     }
     for (var j = 0; j < mapFiltersElements.length; j++) {
       mapFiltersElements[j].setAttribute('disabled', 'disabled');
     }
-
+    form.removeEventListener('submit', onFormLoad);
     title.removeEventListener('invalid', window.valid.emptyFieldValidity);
     title.removeEventListener('input', window.valid.titleValidity);
     price.removeEventListener('invalid', window.valid.emptyFieldValidity);
@@ -78,6 +120,11 @@
     timeOut.removeEventListener('change', window.valid.timeOutValidity);
     timeIn.removeEventListener('change', window.valid.timeInValidity);
     roomNumberSelect.removeEventListener('click', window.valid.numberRoomsValidity);
+    clearButton.removeEventListener('click', clearForm);
+    clearButton.removeEventListener('keydown', clearFormEnter);
+    while (mapPinsBlock.children.length > 2) {
+      mapPinsBlock.removeChild(mapPinsBlock.lastChild);
+    }
   };
 
   pinMain.addEventListener('mousedown', function () {
@@ -102,4 +149,9 @@
   });
 
   disactivationPage();
+
+  window.main = {
+    disactivationPage: disactivationPage,
+    clearForm: clearForm
+  };
 })();
