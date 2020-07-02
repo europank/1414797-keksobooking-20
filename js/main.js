@@ -43,7 +43,9 @@
 
   var closeCard = function () {
     var popupCard = document.querySelector('.map__card');
-    mapBlock.removeChild(popupCard);
+    if (popupCard) {
+      mapBlock.removeChild(popupCard);
+    }
   };
 
   var clearForm = function () {
