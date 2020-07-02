@@ -8,7 +8,7 @@
   };
   var TIMEOUT_IN_MS = 10000;
 
-  var load = function (onLoad, onError) {
+  var load = function (onLoad) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -16,14 +16,14 @@
       if (xhr.status === StatusCode.OK) {
         onLoad(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        window.mess.setMessageError();
       }
     });
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      window.mess.setMessageError();
     });
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      window.mess.setMessageError();
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
@@ -32,30 +32,30 @@
     xhr.send();
   };
 
-  var save = function (data, onLoad, onError) {
+  var save = function (data, onLoad) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === StatusCode.OK) {
         onLoad(xhr.response);
-        window.main.disactivationPage();
-        window.card.closeCard();
-        window.main.clearForm();
         window.mess.setMessageSuccess();
+        window.main.disactivationPage();
+        window.main.closeCard();
+        window.main.clearForm();
 
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        window.mess.setMessageError();
       }
     });
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      window.mess.setMessageError();
     });
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      window.mess.setMessageError();
     });
 
-
+    xhr.timeout = TIMEOUT_IN_MS;
     xhr.open('POST', URL_SAVE);
     xhr.send(data);
   };
