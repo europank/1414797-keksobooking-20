@@ -7,7 +7,6 @@
   var PIN_MAIN_HEIGHT_ACTIVE = 84;
   var NUMBER_OF_OBJECTS = 8;
   var mapPinsBlock = document.querySelector('.map__pins');
-  // var pins = mapPinsBlock.querySelectorAll('.map__pin');
   var pinMain = document.querySelector('.map__pin--main');
   var addressInput = document.querySelector('#address');
   var roomNumberSelect = document.querySelector('#room_number');
@@ -15,7 +14,6 @@
   var title = document.querySelector('#title');
   var price = document.querySelector('#price');
   var typeHouse = document.querySelector('#type');
-  // var flat = typeHouse.querySelector('option[value="flat"]');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
   var mapBlock = document.querySelector('.map');
@@ -43,6 +41,11 @@
   var defaultTimeIn = timeIn.value;
   var defaultTimeOut = timeOut.value;
 
+  var closeCard = function () {
+    var popupCard = document.querySelector('.map__card');
+    mapBlock.removeChild(popupCard);
+  };
+
   var clearForm = function () {
     title.value = '';
     price.value = '';
@@ -55,6 +58,8 @@
     for (var i = 0; i < features.length; i++) {
       features[i].checked = false;
     }
+    disactivationPage();
+    closeCard();
   };
 
   var clearFormEnter = function (evt) {
@@ -152,6 +157,7 @@
 
   window.main = {
     disactivationPage: disactivationPage,
-    clearForm: clearForm
+    clearForm: clearForm,
+    closeCard: closeCard
   };
 })();

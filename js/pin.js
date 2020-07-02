@@ -17,7 +17,7 @@
     pinButton.style.left = locationX + 'px';
     pinButton.style.top = locationY + 'px';
     pinButton.title = object.offer.title;
-    pinButton.addEventListener('click', window.card.closeCard);
+    pinButton.addEventListener('click', window.main.closeCard);
     pinButton.addEventListener('click', function () {
       window.card.setCard(object);
     });

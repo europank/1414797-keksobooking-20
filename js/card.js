@@ -62,7 +62,7 @@
     if (mapBlock.children.length < MAP_CHILD_LENGTH) {
       mapBlock.appendChild(cardElement);
       var escCard = document.querySelector('button.popup__close');
-      escCard.addEventListener('click', closeCard);
+      escCard.addEventListener('click', window.main.closeCard);
       document.addEventListener('keydown', closeCardEsc);
     }
   };
@@ -73,14 +73,9 @@
     }
   };
 
-  var closeCard = function () {
-    var popupCard = document.querySelector('article.map__card.popup');
-    mapBlock.removeChild(popupCard);
-  };
-
   var closeCardEsc = function (evt) {
     if (evt.key === 'Escape') {
-      closeCard();
+      window.main.closeCard();
     }
   };
 
@@ -88,7 +83,6 @@
     renderCard: renderCard,
     setCard: setCard,
     openCardEnter: openCardEnter,
-    closeCard: closeCard,
     closeCardEsc: closeCardEsc
   };
 })();
