@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var successMessage = document.querySelector('#success').content;
   var errorMessage = document.querySelector('#error').content;
   var main = document.querySelector('main');
@@ -18,16 +17,22 @@
     document.addEventListener('click', closeMessageSuccessClick);
   };
 
+  var closeMessage = function (message) {
+    if (message) {
+      main.removeChild(message);
+    }
+  };
+
   var closeMessageSuccessEsc = function (evt) {
     if (evt.key === 'Escape') {
       var messageOk = document.querySelector('.success');
-      main.removeChild(messageOk);
+      closeMessage(messageOk);
     }
   };
 
   var closeMessageSuccessClick = function () {
     var messageOk = document.querySelector('.success');
-    main.removeChild(messageOk);
+    closeMessage(messageOk);
   };
 
   var onErrorMessage = function () {
@@ -46,13 +51,13 @@
 
   var closeMessageErrorClick = function () {
     var messageError = document.querySelector('.error');
-    main.removeChild(messageError);
+    closeMessage(messageError);
   };
 
   var closeMessageErrorEsc = function (evt) {
     if (evt.key === 'Escape') {
       var messageError = document.querySelector('.error');
-      main.removeChild(messageError);
+      closeMessage(messageError);
     }
   };
 
