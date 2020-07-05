@@ -42,10 +42,10 @@
 
   var setMessageError = function () {
     var element = onErrorMessage();
-    var errorButton = document.querySelector('.error__button');
     main.appendChild(element);
     document.addEventListener('keydown', closeMessageErrorEsc);
     document.addEventListener('click', closeMessageErrorClick);
+    var errorButton = document.querySelector('.error__button');
     errorButton.addEventListener('click', closeMessageErrorClick);
   };
 
